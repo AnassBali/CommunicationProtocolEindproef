@@ -12,8 +12,9 @@ class SerialManager:
                 timeout=1
             )
             self.bAlive = True
+            self.rxBuffer = ""
             self.rxList = []
-            print(f"Successfully opened serial port {port}")
+            print(f"Successfully opened serial port {port}, let the communication begin!")
             
             self.receive_thread = threading.Thread(target=self.receive_data)
             self.receive_thread.start()
@@ -23,27 +24,22 @@ class SerialManager:
 
     def send(self, data):
         if self.ser:
-            print(f"SerialManager: Sending data: {data}")
             self.ser.write(data.encode() + b'\n')
 
     def receive_data(self):
         while self.bAlive:
-            self.ser.rts = False
-            char_ch = self.ser.read(1)
-            if char_ch == b'':
-                if len(self.rxList) > 0:
-                    complete_message = ''.join(self.rxList)
-                    print(f"SerialManager: Complete message received: {complete_message}")
-                    self.rxList.clear()
-                continue
-            if self.bAlive:
-                self.rxList.append(char_ch.decode('utf-8'))
+            if self.ser.in_waiting:
+                char_ch = self.ser.read().decode('utf-8')
+                if char_ch == '\n':
+                    complete_message = self.rxBuffer.strip()
+                    self.rxBuffer = ""
+                    self.rxList.append(complete_message)
+                else:
+                    self.rxBuffer += char_ch
 
     def receive(self):
-        if len(self.rxList) > 0:
-            complete_message = ''.join(self.rxList)
-            self.rxList.clear()
-            return complete_message
+        if self.rxList:
+            return self.rxList.pop(0)
         return ""
 
     def close(self):
