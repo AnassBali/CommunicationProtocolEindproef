@@ -18,7 +18,7 @@ class ChatGUI:
         self.messages = []
 
         self.root = tk.Tk()
-        self.root.title(f"User {user_id} Chat")
+        self.root.title(f"Secure Communication Protocol")
 
         self.message_box = tk.Text(self.root, height=10, width=50, state=tk.DISABLED)
         self.message_box.pack(pady=10)
@@ -37,7 +37,7 @@ class ChatGUI:
             new_messages = self.comm_protocol.get_new_messages()
             for msg in new_messages:
                 self.messages.append(msg)
-                self.update_message_box(f"Received message: {msg}\n")
+                self.update_message_box(f"Received message: {msg}\n")  # Display decrypted message
 
     def update_message_box(self, message):
         self.message_box.config(state=tk.NORMAL)
@@ -52,6 +52,7 @@ class ChatGUI:
             self.update_message_box(f"Message sent: {message}\n")
         else:
             self.update_message_box("Message not sent, retrying...\n")
+        self.input_box.delete(0, tk.END)
 
     def on_closing(self):
         self.comm_protocol.close()
