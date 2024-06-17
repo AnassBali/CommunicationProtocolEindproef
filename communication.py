@@ -27,7 +27,8 @@ class CommunicationProtocol:
 
         encoded_message = self.message_handler.encode_message(final_message, sequence_id_str)
         
-        print(f"Sending message: {encoded_message}")
+        # Print encoded message to the console for debugging
+        print(f"Sending encoded message: {encoded_message}")
         self.serial_manager.send(encoded_message)
         return True
 
@@ -35,10 +36,9 @@ class CommunicationProtocol:
         while self.running:
             data = self.serial_manager.receive()
             if data:
-                print(f"Received data: {data}")
+                print(f"Received encoded data: {data}")
                 valid, sender_id, receiver_id, sequence_id, message = self.message_handler.process_received_data(data)
-                print(f"Processed data: valid={valid}, sender_id={sender_id}, receiver_id={receiver_id}, sequence_id={sequence_id}, message={message}")
-                if valid and sender_id == self.other_user_id and receiver_id == self.user_id:
+                if valid and sender_id == self.receiver_id and receiver_id == self.sender_id:
                     self.new_messages.put(message)
 
     def get_new_messages(self):
