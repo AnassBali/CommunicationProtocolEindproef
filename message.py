@@ -10,18 +10,17 @@ class MessageHandler:
         calculated_crc = self.calculate_crc(data)
         return calculated_crc == received_crc
     
-    def simple_hash(self, message, key):
-        if key is None:
-            key = "defaultkey"
+    def simple_hash(self, message, sequence_id):
+        key = sequence_id
         key = (key * (len(message) // len(key) + 1))[:len(message)]
         return ''.join(chr(ord(c) ^ ord(k)) for c, k in zip(message, key))
 
     def encode_message(self, message, sequence_id):
-        key = sequence_id if sequence_id else "defaultkey"
+        key = sequence_id
         return self.simple_hash(message, key)
 
     def decode_message(self, encoded_message, sequence_id):
-        key = sequence_id if sequence_id else "defaultkey"
+        key = sequence_id 
         return self.simple_hash(encoded_message, key)
 
     def process_received_data(self, data):
