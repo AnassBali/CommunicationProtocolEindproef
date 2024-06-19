@@ -24,6 +24,7 @@ class SerialManager:
 
     def send(self, data):
         if self.ser:
+            print(f"Sending data: {data}")
             self.ser.write(data.encode() + b'\n')
 
     def receive_data(self):
