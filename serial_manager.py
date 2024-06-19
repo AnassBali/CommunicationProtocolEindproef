@@ -34,6 +34,7 @@ class SerialManager:
                     complete_message = self.rxBuffer.strip()
                     self.rxBuffer = ""
                     self.rxList.append(complete_message)
+                    print(f"Received complete message: {complete_message}")
                 else:
                     self.rxBuffer += char_ch
 
